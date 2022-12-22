@@ -1,8 +1,7 @@
-package ru.job4j.todo.persistance;
+package ru.job4j.todo.persistence;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.jcip.annotations.ThreadSafe;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -30,11 +29,39 @@ public class TaskDBStore {
         return task;
     }
 
-    public Task saveOrUpdate(Task task) {
+    public Task updateTask(Task task) {
         var session = sf.openSession();
-        session.beginTransaction();
-        session.saveOrUpdate(task);
-        session.getTransaction().commit();
+        try {
+            session.beginTransaction();
+            session.createQuery(
+                            "UPDATE Task SET name = :fName, description = :fDescription, done = :fDone WHERE id = :fId")
+                    .setParameter("fName", task.getName())
+                    .setParameter("fDescription", task.getDescription())
+                    .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId()).executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            log.error("Error HQL in updateTask.", e);
+        }
+        session.close();
+        return task;
+    }
+
+    public Task completedTask(Task task) {
+        var session = sf.openSession();
+        try {
+            session.beginTransaction();
+            session.createQuery(
+                    "UPDATE Task SET done = :fDone WHERE id = :fId")
+                    .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId())
+                    .executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            log.error("Error HQL in completedTask.", e);
+           session.getTransaction().rollback();
+        }
         session.close();
         return task;
     }
@@ -44,10 +71,10 @@ public class TaskDBStore {
         List<Task> list = new ArrayList<>();
         try {
             session.beginTransaction();
-            list = session.createQuery("FROM Task t ORDER BY t.id", Task.class).list();
+            list = session.createQuery("FROM Task ORDER BY id", Task.class).list();
             session.getTransaction().commit();
         } catch (HibernateException e) {
-            log.error("Error in findAllOrderById.", e);
+            log.error("Error HQL in findAllOrderById.", e);
             session.getTransaction().rollback();
         }
         session.close();
@@ -59,7 +86,7 @@ public class TaskDBStore {
         Optional<Task> task = Optional.empty();
         try {
             session.beginTransaction();
-            task = session.createQuery("FROM Task t WHERE t.id = :fId", Task.class)
+            task = session.createQuery("FROM Task WHERE id = :fId", Task.class)
                     .setParameter("fId", id)
                     .uniqueResultOptional();
             session.getTransaction().commit();
@@ -75,47 +102,30 @@ public class TaskDBStore {
         try {
             var session = sf.openSession();
             session.beginTransaction();
-            session.createQuery("DELETE FROM Task t WHERE t.id = :fId")
+            session.createQuery("DELETE FROM Task WHERE id = :fId")
                     .setParameter("fId", id)
                     .executeUpdate();
             session.getTransaction().commit();
         } catch (HibernateException e) {
-            log.error("Error in deleteTask.", e);
+            log.error("Error HQL in deleteTask.", e);
         }
     }
 
     /**
-     * Метод выполняет поиск и возврат списка задач, отсортированный по id
-     * @return список выполненных задач
+     * Метод выполняет поиск и возврат списка задач по флагу
+     * @return список задач, сортировкой по id
      */
-    public List<Task> findOnlyDoneTaskOrderById() {
+    public List<Task> findAtFlagAndOrderById(boolean flag) {
         var session = sf.openSession();
         List<Task> list = new ArrayList<>();
         try {
             session.beginTransaction();
-            list = session.createQuery("FROM Task t WHERE t.done = true ORDER BY t.id", Task.class).list();
+            list = session.createQuery("FROM Task WHERE done = :fDone ORDER BY id", Task.class)
+                    .setParameter("fDone", flag)
+                    .list();
             session.getTransaction().commit();
         } catch (HibernateException e) {
-            log.error("Error in findOnlyDoneTaskOrderById.", e);
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return list;
-    }
-
-    /**
-     * Метод выполняет поиск и возврат списка задач, отсортированный по дате создания
-     * @return список новых задач
-     */
-    public List<Task> findOnlyNewTaskOrderByCreated() {
-        var session = sf.openSession();
-        List<Task> list = new ArrayList<>();
-        try {
-            session.beginTransaction();
-            list = session.createQuery("FROM Task t WHERE t.done = false ORDER BY t.created", Task.class).list();
-            session.getTransaction().commit();
-        } catch (HibernateException e) {
-            log.error("Error in findOnlyNewTaskOrderByCreated.", e);
+            log.error("Error in findAtFlagAndOrderById.", e);
             session.getTransaction().rollback();
         }
         session.close();

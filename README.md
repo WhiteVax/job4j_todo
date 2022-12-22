@@ -4,17 +4,18 @@
 и просматривать выполненные задания по средствам web интерфейса.
 
 ### Стек технологий:
- - java 16;
- - Spring boot, 
- - Thymeleaf,
- - Bootstrap,
- - Postgresql
- - Hibernate, 
- - Liquibase,
- - Lombok.
+ - java 17;
+ - Spring boot 2.7.4; 
+ - Thymeleaf 2.7.4;
+ - Bootstrap 4;
+ - Postgresql 42.2.9;
+ - Hibernate 5.6.11; 
+ - Liquibase 4.15.0;
+ - H2 2.1.214;
+ - Lombok 1.18.24.
 
 ### Требования к окружению :
- - java 16+;
+ - java 17+;
  - maven 4.0.0;
  - Postgresql 13+;
 

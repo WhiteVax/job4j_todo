@@ -36,12 +36,12 @@ public class Task {
             return false;
         }
         Task task = (Task) o;
-        return Objects.equals(name, task.name) && Objects.equals(description, task.description);
+        return id == task.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description);
+        return Objects.hash(id);
     }
 
     @Override

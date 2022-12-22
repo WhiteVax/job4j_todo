@@ -54,7 +54,7 @@ public class TaskController {
     @PostMapping("/createTask")
     public String addTask(@ModelAttribute Task task) {
         store.createTask(task);
-        return "redirect:task/tasks";
+        return "redirect:/tasks";
     }
 
     @GetMapping("/tasks/updateTask/{id}")
@@ -67,19 +67,19 @@ public class TaskController {
     @PostMapping("/updateTask")
     public String updateTask(@ModelAttribute Task task) {
         store.updateTask(task);
-        return "redirect:task/tasks";
+        return "redirect:/tasks";
     }
 
     @PostMapping("/tasks/delete/{id}")
     public String delete(@PathVariable("id") int id) {
         store.deleteTask(id);
-        return "redirect:task/tasks";
+        return "redirect:/tasks";
     }
 
     @PostMapping("/tasks/completed/{id}")
     public String completedTask(@ModelAttribute Task task) {
         task.setDone(true);
-        store.updateTask(task);
-        return "redirect:task/tasks";
+        store.completedTask(task);
+        return "redirect:/tasks";
     }
 }

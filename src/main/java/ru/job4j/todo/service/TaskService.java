@@ -3,7 +3,7 @@ package ru.job4j.todo.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.persistance.TaskDBStore;
+import ru.job4j.todo.persistence.TaskDBStore;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,11 @@ public class TaskService {
     }
 
     public Task updateTask(Task task) {
-        return store.saveOrUpdate(task);
+        return store.updateTask(task);
+    }
+
+    public Task completedTask(Task task) {
+        return store.completedTask(task);
     }
 
     public List<Task> findAllTask() {
@@ -26,11 +30,11 @@ public class TaskService {
     }
 
     public List<Task> findNewTask() {
-        return store.findOnlyNewTaskOrderByCreated();
+        return store.findAtFlagAndOrderById(false);
     }
 
     public List<Task> findOldTask() {
-        return store.findOnlyDoneTaskOrderById();
+        return store.findAtFlagAndOrderById(true);
     }
 
     public Optional<Task> findById(int id) {
