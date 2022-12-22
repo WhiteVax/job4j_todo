@@ -10,7 +10,14 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class Main {
-    @Bean()
+
+    /**
+     * SessionFactory конфигуратор, используеться для инициализации пула,
+     * метод configure() читает файл hibernate.cfg.xm со всеми настройками.
+     * Создаётся через фабрику один раз для всего приложения.
+     * @return Session объект для манипуляци с БД.
+     */
+    @Bean(destroyMethod = "close")
     public SessionFactory sf() {
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
