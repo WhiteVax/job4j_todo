@@ -4,6 +4,9 @@ import ru.job4j.todo.model.User;
 
 import javax.servlet.http.HttpSession;
 
+/**
+ * Утилитный класс, используется для получения пользователя с сессии
+ */
 public final class UserSession {
     private UserSession() {
     }

@@ -29,11 +29,14 @@
 4. Выполнить команду: mvn spring-boot:run
 5. Перейти по ссылке: http://localhost:8080
 
- ### Все задачи
-![главный вид](resources/mainView.png)
+### Панель входа
+![главный вид](resources/logView.png)
+
+### Все задачи
+![главный вид](resources/tasksView.png)
 
 ### Подробное описание задачи
-![подробней задачи](resources/task.png)
+![подробней задачи](resources/taskView.png)
 
  Контакты:
 @WhiteVax
