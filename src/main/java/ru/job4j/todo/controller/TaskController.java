@@ -26,16 +26,16 @@ public class TaskController {
         return "task/tasks";
     }
 
-    @GetMapping("/newTasks")
+    @GetMapping("/new")
     public String newTask(Model model) {
         model.addAttribute("tasks", store.findNewTask());
-        return "task/newTasks";
+        return "task/new";
     }
 
-    @GetMapping("/doneTasks")
+    @GetMapping("/done")
     public String doneTask(Model model) {
         model.addAttribute("tasks", store.findOldTask());
-        return "task/doneTasks";
+        return "task/done";
     }
 
     @GetMapping("/tasks/{id}")
@@ -45,26 +45,26 @@ public class TaskController {
         return "task/task";
     }
 
-    @GetMapping("/tasks/addTask")
+    @GetMapping("/tasks/add")
     public String createTask(Model model) {
         model.addAttribute("task", model);
-        return "task/formAddTask";
+        return "formAdd";
     }
 
-    @PostMapping("/createTask")
+    @PostMapping("/create")
     public String addTask(@ModelAttribute Task task) {
         store.createTask(task);
         return "redirect:/tasks";
     }
 
-    @GetMapping("/tasks/updateTask/{id}")
+    @GetMapping("/tasks/update/{id}")
     public String formUpdateTask(Model model, @PathVariable("id") int id) {
         var task = store.findById(id).get();
         model.addAttribute("task", task);
-        return "task/formUpdateTask";
+        return "formUpdate";
     }
 
-    @PostMapping("/updateTask")
+    @PostMapping("/update")
     public String updateTask(@ModelAttribute Task task) {
         store.updateTask(task);
         return "redirect:/tasks";
