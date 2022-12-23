@@ -32,10 +32,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link active" th:href="@{/tasks}">Все задания</a>
+                <a class="nav-item nav-link" th:href="@{/tasks}">Все задания</a>
                 <a class="nav-item nav-link" th:href="@{/new}">Новые задания</a>
                 <a class="nav-item nav-link" th:href="@{/done}">Выполненные задания</a>
-                <a class="nav-item nav-link" th:href="@{/registration}">Регистрация</a>
+                <a class="nav-item nav-link active" th:href="@{/registration}">Регистрация</a>
                 <a class="nav-item nav-link" th:href="@{/loginPage}">Войти</a>
             </div>
         </div>
@@ -43,48 +43,29 @@
 
     <div class="row pt-3">
         <div class="card" style="width: 100%">
-            <table class="table">
-                <thead class="card-header">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Название</th>
-                    <th scope="col">Описание</th>
-                    <th scope="col">Дата создания</th>
-                    <th scope="col">Состояние</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td th:text="${task.id}"></td>
-                    <td th:text="${task.name}"></td>
-                    <td th:text="${task.description}"></td>
-                    <td th:text="${task.created}"></td>
-                    <td>
-                        <span th:if="${task.done}">Выполнено</span>
-                        <span th:if="${!task.done}">В работе</span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="card-header">
+                Регистрация.
+            </div>
+            <div class="card-body">
+                <form th:action="@{/createUser}" method="POST">
+                    <div class="form-group">
+                        <label for="name">Имя</label>
+                        <input type="text" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="login">Логин</label>
+                        <input type="text" class="form-control" name="login" id="login">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" class="form-control" name="password" id="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary m-3">Зарегистрироваться
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    <br>
-    <form th:action="@{|completed/${id}|}" method="POST" th:object="${task}"
-          enctype="multipart/form-data">
-        <input type="hidden" name="id" th:field="*{id}"/>
-        <input type="hidden" name="id" th:field="*{name}"/>
-        <input type="hidden" name="description" th:field="*{description}"/>
-        <input type="hidden" name="created" th:field="*{created}"/>
-        <button type="submit" class="btn btn-primary">Выполнено</button>
-    </form>
-    <br>
-    <form th:method="GET" th:action="@{|updateTask/${id}|}">
-        <input type="submit" value="Редактировать" class="btn btn-primary">
-    </form>
-    <br>
-    <form th:method="POST" th:action="@{|delete/${id}|}">
-        <input type="submit" value="Удалить" class="btn btn-primary">
-    </form>
 </div>
 </body>
 </html>
