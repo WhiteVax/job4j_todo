@@ -36,7 +36,14 @@
                 <a class="nav-item nav-link" th:href="@{/new}">Новые задания</a>
                 <a class="nav-item nav-link" th:href="@{/done}" >Выполненные задания</a>
                 <a class="nav-item nav-link" th:href="@{/registration}">Регистрация</a>
-                <a class="nav-item nav-link" th:href="@{/loginPage}">Войти</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}" th:href="@{/loginPage}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Войти</span>
+                </a>
+                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Выйти</span>
+                </a>
             </div>
         </div>
     </nav>
@@ -47,7 +54,7 @@
                 Редактировать задание.
             </div>
             <div class="card-body">
-                <form th:action="@{/updateTask}" method="POST" th:object="${task}">
+                <form th:action="@{/update}" method="POST" th:object="${task}">
                     <input type="hidden" name="id" th:field="*{id}"/>
                     <div class="form-group">
                         <label for="name">Название</label>

@@ -36,7 +36,14 @@
                 <a class="nav-item nav-link" th:href="@{/new}">Новые задания</a>
                 <a class="nav-item nav-link active" th:href="@{/done}">Выполненные задания</a>
                 <a class="nav-item nav-link" th:href="@{/registration}">Регистрация</a>
-                <a class="nav-item nav-link" th:href="@{/loginPage}">Войти</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}" th:href="@{/loginPage}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Войти</span>
+                </a>
+                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Выйти</span>
+                </a>
             </div>
         </div>
     </nav>
@@ -68,7 +75,7 @@
     </div>
 
     <br>
-    <form th:method="GET" th:action="@{/tasks/addTask}">
+    <form th:method="GET" th:action="@{/tasks/add}">
         <input type="submit" value="Добавить задание" class="btn btn-primary">
     </form>
 </div>

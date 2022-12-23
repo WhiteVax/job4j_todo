@@ -36,7 +36,14 @@
                 <a class="nav-item nav-link" th:href="@{/new}">Новые задания</a>
                 <a class="nav-item nav-link" th:href="@{/done}">Выполненные задания</a>
                 <a class="nav-item nav-link" th:href="@{/registration}">Регистрация</a>
-                <a class="nav-item nav-link" th:href="@{/loginPage}">Войти</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}" th:href="@{/loginPage}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Войти</span>
+                </a>
+                <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/logout}">
+                    <span th:text="${user.name}"></span>
+                    <span> | Выйти</span>
+                </a>
             </div>
         </div>
     </nav>
@@ -69,7 +76,7 @@
         </div>
     </div>
     <br>
-    <form th:action="@{|completed/${id}|}" method="POST" th:object="${task}"
+    <form th:action="@{|completed/${task.id}|}" method="POST" th:object="${task}"
           enctype="multipart/form-data">
         <input type="hidden" name="id" th:field="*{id}"/>
         <input type="hidden" name="id" th:field="*{name}"/>
@@ -78,11 +85,11 @@
         <button type="submit" class="btn btn-primary">Выполнено</button>
     </form>
     <br>
-    <form th:method="GET" th:action="@{|updateTask/${id}|}">
+    <form th:method="GET" th:action="@{|update/${task.id}|}">
         <input type="submit" value="Редактировать" class="btn btn-primary">
     </form>
     <br>
-    <form th:method="POST" th:action="@{|delete/${id}|}">
+    <form th:method="POST" th:action="@{|delete/${task.kid}|}">
         <input type="submit" value="Удалить" class="btn btn-primary">
     </form>
 </div>
