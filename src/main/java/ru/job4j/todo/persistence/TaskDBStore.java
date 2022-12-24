@@ -2,8 +2,6 @@ package ru.job4j.todo.persistence;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.HibernateException;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
@@ -17,98 +15,71 @@ import java.util.*;
 @AllArgsConstructor
 @Slf4j
 public class TaskDBStore {
-    private final SessionFactory sf;
+    private final CrudRepository crudRepository;
 
+    /**
+     * Сохранить в базе.
+     * @param task
+     * @return task с id.
+     */
     public Task createTask(Task task) {
-        var session = sf.openSession();
-        session.beginTransaction();
         task.setCreated(LocalDate.now());
-        session.saveOrUpdate(task);
-        session.getTransaction().commit();
-        session.close();
+        crudRepository.run(session ->
+            session.persist(task));
         return task;
     }
 
+    /**
+     * Обновить в базе задачу (имя, описание).
+     * @param task обновлённую.
+     */
     public Task updateTask(Task task) {
-        var session = sf.openSession();
-        try {
-            session.beginTransaction();
-            session.createQuery(
-                            "UPDATE Task SET name = :fName, description = :fDescription, done = :fDone WHERE id = :fId")
-                    .setParameter("fName", task.getName())
-                    .setParameter("fDescription", task.getDescription())
-                    .setParameter("fDone", task.isDone())
-                    .setParameter("fId", task.getId()).executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            log.error("Error HQL in updateTask.", e);
-        }
-        session.close();
+        crudRepository.run(
+            "UPDATE Task SET name = :fName, description = :fDescription WHERE id = :fId",
+                    Map.of("fName", task.getName(),
+                            "fDescription", task.getDescription(),
+                            "fId", task.getId())
+        );
         return task;
     }
 
+    /**
+     * Выполняет задачу
+     * @param task на вход получает задачу с ид и флагом
+     * @return возвращает обновлённую задачу
+     */
     public Task completedTask(Task task) {
-        var session = sf.openSession();
-        try {
-            session.beginTransaction();
-            session.createQuery(
-                    "UPDATE Task SET done = :fDone WHERE id = :fId")
-                    .setParameter("fDone", task.isDone())
-                    .setParameter("fId", task.getId())
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("Error HQL in completedTask.", e);
-           session.getTransaction().rollback();
-        }
-        session.close();
+        crudRepository.run(
+                "UPDATE Task SET done = :fDone WHERE id = :fId",
+                Map.of("fDone", task.isDone(),
+                        "fId", task.getId())
+        );
         return task;
     }
 
+    /**
+     * Поиск всех задач
+     * @return List<task> сортировка по ид
+     */
     public List<Task> findAllOrderById() {
-        var session = sf.openSession();
-        List<Task> list = new ArrayList<>();
-        try {
-            session.beginTransaction();
-            list = session.createQuery("FROM Task ORDER BY id", Task.class).list();
-            session.getTransaction().commit();
-        } catch (HibernateException e) {
-            log.error("Error HQL in findAllOrderById.", e);
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return list;
+        return crudRepository.query("FROM Task ORDER BY id", Task.class);
     }
 
+    /**
+     * Поиск задачи
+     * @param id для поиска
+     * @return возвращает объект Optional который содержит задачу или пустую обёртку
+     */
     public Optional<Task> findById(int id) {
-        var session = sf.openSession();
-        Optional<Task> task = Optional.empty();
-        try {
-            session.beginTransaction();
-            task = session.createQuery("FROM Task WHERE id = :fId", Task.class)
-                    .setParameter("fId", id)
-                    .uniqueResultOptional();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("Error HQL in findById.", e);
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return task;
+        return crudRepository.optional("FROM Task WHERE id = :fId", Task.class,
+                Map.of("fId", id));
     }
 
+    /**
+     * Удаляет задачу по id
+     */
     public void deleteTask(int id) {
-        try {
-            var session = sf.openSession();
-            session.beginTransaction();
-            session.createQuery("DELETE FROM Task WHERE id = :fId")
-                    .setParameter("fId", id)
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (HibernateException e) {
-            log.error("Error HQL in deleteTask.", e);
-        }
+        crudRepository.run("DELETE FROM Task WHERE id = :fId", Map.of("fId", id));
     }
 
     /**
@@ -116,19 +87,7 @@ public class TaskDBStore {
      * @return список задач, сортировкой по id
      */
     public List<Task> findAtFlagAndOrderById(boolean flag) {
-        var session = sf.openSession();
-        List<Task> list = new ArrayList<>();
-        try {
-            session.beginTransaction();
-            list = session.createQuery("FROM Task WHERE done = :fDone ORDER BY id", Task.class)
-                    .setParameter("fDone", flag)
-                    .list();
-            session.getTransaction().commit();
-        } catch (HibernateException e) {
-            log.error("Error in findAtFlagAndOrderById.", e);
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return list;
+        return crudRepository.query("FROM Task WHERE done = :fDone ORDER BY id", Task.class,
+                Map.of("fDone", flag));
     }
 }
