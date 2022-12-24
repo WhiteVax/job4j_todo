@@ -26,8 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    public String regOrFail(Model model, @ModelAttribute User user, HttpSession session) {
-        model.addAttribute("user", session);
+    public String regOrFail(Model model, @ModelAttribute User user) {
         Optional<User> regUser = store.createUser(user);
         if (regUser.isEmpty()) {
             model.addAttribute("message",
