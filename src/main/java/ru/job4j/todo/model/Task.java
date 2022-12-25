@@ -27,6 +27,10 @@ public class Task {
     private LocalDate created;
     private boolean done;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -48,10 +52,11 @@ public class Task {
     public String toString() {
         return "Task{"
                 + "id=" + id
-                + "name=" + name
+                + ", name='" + name + '\''
                 + ", description='" + description + '\''
                 + ", created=" + created
                 + ", done=" + done
+                + ", user=" + user.getName()
                 + '}';
     }
 }

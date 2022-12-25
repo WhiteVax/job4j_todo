@@ -57,6 +57,7 @@
                     <th scope="col">Описание</th>
                     <th scope="col">Дата создания</th>
                     <th scope="col">Состояние</th>
+                    <th scope="col">Пользователь</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -68,6 +69,7 @@
                     </td>
                     <td th:text="${task.created}"></td>
                     <td><span th:if="${task.done}">Выполнено</span></td>
+                    <td th:text="${task.user.name}"></td>
                 </tr>
                 </tbody>
             </table>

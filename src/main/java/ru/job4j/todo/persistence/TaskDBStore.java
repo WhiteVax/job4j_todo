@@ -25,7 +25,7 @@ public class TaskDBStore {
     public Task createTask(Task task) {
         task.setCreated(LocalDate.now());
         crudRepository.run(session ->
-            session.persist(task));
+            session.persist("task", task));
         return task;
     }
 
