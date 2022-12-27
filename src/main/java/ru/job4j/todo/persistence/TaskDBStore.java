@@ -35,9 +35,10 @@ public class TaskDBStore {
      */
     public Task updateTask(Task task) {
         crudRepository.run(
-            "UPDATE Task SET name = :fName, description = :fDescription WHERE id = :fId",
+            "UPDATE Task SET name = :fName, description = :fDescription, priority_id = :fPriority_id WHERE id = :fId",
                     Map.of("fName", task.getName(),
                             "fDescription", task.getDescription(),
+                            "fPriority_id", task.getPriority().getId(),
                             "fId", task.getId())
         );
         return task;
@@ -62,7 +63,7 @@ public class TaskDBStore {
      * @return List<task> сортировка по ид
      */
     public List<Task> findAllOrderById() {
-        return crudRepository.query("FROM Task ORDER BY id", Task.class);
+        return crudRepository.query("FROM Task t JOIN FETCH t.priority ORDER BY t.id", Task.class);
     }
 
     /**
@@ -71,7 +72,7 @@ public class TaskDBStore {
      * @return возвращает объект Optional который содержит задачу или пустую обёртку
      */
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("FROM Task WHERE id = :fId", Task.class,
+        return crudRepository.optional("FROM Task t JOIN FETCH t.priority WHERE t.id = :fId ", Task.class,
                 Map.of("fId", id));
     }
 
@@ -87,7 +88,7 @@ public class TaskDBStore {
      * @return список задач, сортировкой по id
      */
     public List<Task> findAtFlagAndOrderById(boolean flag) {
-        return crudRepository.query("FROM Task WHERE done = :fDone ORDER BY id", Task.class,
+        return crudRepository.query("FROM Task t JOIN FETCH t.priority WHERE t.done = :fDone ORDER BY t.id", Task.class,
                 Map.of("fDone", flag));
     }
 }

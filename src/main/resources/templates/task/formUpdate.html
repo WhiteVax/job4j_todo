@@ -64,6 +64,13 @@
                         <label for="description">Описание</label>
                         <input type="text" class="form-control" name="description" id="description" th:field="*{description}">
                     </div>
+                    <div class="form-group">
+                        <label for="priority.id">Приоритет</label>
+                        <select class="form-control" id="priority.id" name="priority.id">
+                            <option th:each="priority : ${priorities}" th:value="${priority.id}"
+                                    th:text="${priority.name}"></option>
+                        </select>
+                    </div>
                     <input type="hidden" name="created" th:field="*{created}"/>
                     <input type="hidden" name="done" th:field="*{done}"/>
                     <button type="submit" class="btn btn-primary m-3">Сохранить

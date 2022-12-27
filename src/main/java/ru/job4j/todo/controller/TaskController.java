@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
@@ -15,9 +16,11 @@ import static ru.job4j.todo.util.UserSession.getUser;
 public class TaskController {
 
     private final TaskService store;
+    private final PriorityService storePriority;
 
-    public TaskController(TaskService store) {
+    public TaskController(TaskService store, PriorityService storePriority) {
         this.store = store;
+        this.storePriority = storePriority;
     }
 
     @GetMapping("")
@@ -61,6 +64,7 @@ public class TaskController {
         User user = getUser(session);
         model.addAttribute("user", user);
         model.addAttribute("task", model);
+        model.addAttribute("priorities", storePriority.getAll());
         return "task/formAdd";
     }
 
@@ -75,8 +79,9 @@ public class TaskController {
 
     @GetMapping("/tasks/update/{id}")
     public String formUpdateTask(Model model, @PathVariable("id") int id, HttpSession session) {
-        model.addAttribute("user", getUser(session));
         var task = store.findById(id).get();
+        model.addAttribute("user", getUser(session));
+        model.addAttribute("priorities", storePriority.getAll());
         model.addAttribute("task", task);
         return "task/formUpdate";
     }
