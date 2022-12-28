@@ -4,3 +4,5 @@ CREATE TABLE IF NOT EXISTS priorities
     name     TEXT UNIQUE NOT NULL,
     position INT
 );
+
+COMMENT ON TABLE priorities IS 'Приоритеты задач'
