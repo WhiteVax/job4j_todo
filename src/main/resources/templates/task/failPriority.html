@@ -32,10 +32,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{/tasks}">Все задания</a>
+                <a class="nav-item nav-link active" th:href="@{/tasks}">Все задания</a>
                 <a class="nav-item nav-link" th:href="@{/new}">Новые задания</a>
                 <a class="nav-item nav-link" th:href="@{/done}">Выполненные задания</a>
-                <a class="nav-item nav-link active" th:href="@{/registration}">Регистрация</a>
+                <a class="nav-item nav-link" th:href="@{/registration}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}" th:href="@{/loginPage}">
                     <span th:text="${user.name}"></span>
                     <span> | Войти</span>
@@ -51,9 +51,11 @@
     <div class="row pt-3">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Регистрация.
+                Новое задание.
             </div>
-            <div><p>Успешно зарегистрирован.</p></div>
+            <div class="card-body">
+              <p>Ошибка при добавлении задачи. Не найден такой приоритет задач.</p>
+            </div>
         </div>
     </div>
 </div>

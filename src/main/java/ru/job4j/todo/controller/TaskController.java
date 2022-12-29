@@ -70,11 +70,20 @@ public class TaskController {
 
     @PostMapping("/create")
     public String addTask(Model model, @ModelAttribute Task task, HttpSession session) {
+        if (!storePriority.checkPriorityById(task.getPriority().getId())) {
+            return "redirect:/failPriority";
+        }
         User user = getUser(session);
         task.setUser(user);
         store.createTask(task);
         model.addAttribute("user", user);
         return "redirect:/tasks";
+    }
+
+    @GetMapping("/failPriority")
+    public String failPriority(Model model, HttpSession session) {
+        model.addAttribute("user", getUser(session));
+        return "task/failPriority";
     }
 
     @GetMapping("/tasks/update/{id}")
