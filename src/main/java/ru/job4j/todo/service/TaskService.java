@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.persistence.PriorityDBStore;
 import ru.job4j.todo.persistence.TaskDBStore;
 
 import java.util.List;
@@ -12,17 +13,28 @@ import java.util.Optional;
 @Service
 public class TaskService {
     private final TaskDBStore store;
+    private final PriorityDBStore priorities;
 
-    public Task createTask(Task task) {
-        return store.createTask(task);
+    public boolean createTask(Task task) {
+        boolean rsl = false;
+        if (priorities.findById(task.getPriority().getId()).isPresent()) {
+            store.createTask(task);
+            rsl = true;
+        }
+        return rsl;
     }
 
-    public Task updateTask(Task task) {
-        return store.updateTask(task);
+    public boolean updateTask(Task task) {
+        var tmp = store.findById(task.getId());
+            store.updateTask(task);
+        return tmp.isPresent();
     }
 
-    public Task completedTask(Task task) {
-        return store.completedTask(task);
+    public boolean completedTask(Task task) {
+        var rsl = store.findById(task.getId());
+        task.setDone(true);
+        store.completedTask(task);
+        return rsl.isPresent();
     }
 
     public List<Task> findAllTask() {
@@ -41,7 +53,9 @@ public class TaskService {
         return store.findById(id);
     }
 
-    public void deleteTask(int id) {
+    public boolean deleteTask(int id) {
+        var rsl = store.findById(id);
         store.deleteTask(id);
+        return rsl.isPresent();
     }
 }

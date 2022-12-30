@@ -70,14 +70,13 @@ public class TaskController {
 
     @PostMapping("/create")
     public String addTask(Model model, @ModelAttribute Task task, HttpSession session) {
-        if (!storePriority.checkPriorityById(task.getPriority().getId())) {
-            return "redirect:/failPriority";
-        }
         User user = getUser(session);
-        task.setUser(user);
-        store.createTask(task);
         model.addAttribute("user", user);
-        return "redirect:/tasks";
+        task.setUser(user);
+        if (store.createTask(task)) {
+            return "redirect:/tasks";
+        }
+        return "redirect:/failPriority";
     }
 
     @GetMapping("/failPriority")
@@ -88,31 +87,57 @@ public class TaskController {
 
     @GetMapping("/tasks/update/{id}")
     public String formUpdateTask(Model model, @PathVariable("id") int id, HttpSession session) {
-        var task = store.findById(id).get();
+        var task = store.findById(id);
+        if (task.isEmpty()) {
+            return "redirect:/failUpdate";
+        }
         model.addAttribute("user", getUser(session));
         model.addAttribute("priorities", storePriority.getAll());
-        model.addAttribute("task", task);
+        model.addAttribute("task", task.get());
         return "task/formUpdate";
+    }
+
+    @GetMapping("/failUpdate")
+    public String formUpdateTask(Model model, HttpSession session) {
+        model.addAttribute("user", getUser(session));
+        return "task/failUpdate";
     }
 
     @PostMapping("/update")
     public String updateTask(Model model, @ModelAttribute Task task, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        store.updateTask(task);
-        return "redirect:/tasks";
+        if (store.updateTask(task)) {
+            return "redirect:/tasks";
+        }
+        return "redirect:/failUpdate";
     }
 
     @PostMapping("/tasks/delete/{id}")
     public String delete(@PathVariable("id") int id) {
-        store.deleteTask(id);
-        return "redirect:/tasks";
+        if (store.deleteTask(id)) {
+            return "redirect:/tasks";
+        }
+        return "redirect:/failDelete";
+    }
+
+    @GetMapping("/failDelete")
+    public String failDelete(Model model, HttpSession session) {
+        model.addAttribute("user", getUser(session));
+        return "task/failDelete";
     }
 
     @PostMapping("/tasks/completed/{id}")
-    public String completedTask(Model model, @ModelAttribute Task task, HttpSession session) {
+    public String completedTask(Model model, @ModelAttribute Task task) {
+//        model.addAttribute("user", getUser(session));
+        if (store.completedTask(task)) {
+            return "redirect:/tasks";
+        }
+        return "redirect:/failCompleted";
+    }
+
+    @GetMapping("/failCompleted")
+    public String failCompleted(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        task.setDone(true);
-        store.completedTask(task);
-        return "redirect:/tasks";
+        return "task/failCompleted";
     }
 }
