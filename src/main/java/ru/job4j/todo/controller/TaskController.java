@@ -5,9 +5,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static ru.job4j.todo.util.UserSession.getUser;
@@ -17,10 +19,12 @@ public class TaskController {
 
     private final TaskService store;
     private final PriorityService storePriority;
+    private final CategoryService storeCategory;
 
-    public TaskController(TaskService store, PriorityService storePriority) {
+    public TaskController(TaskService store, PriorityService storePriority, CategoryService storeCategory) {
         this.store = store;
         this.storePriority = storePriority;
+        this.storeCategory = storeCategory;
     }
 
     @GetMapping("")
@@ -65,24 +69,27 @@ public class TaskController {
         model.addAttribute("user", user);
         model.addAttribute("task", model);
         model.addAttribute("priorities", storePriority.getAll());
+        model.addAttribute("categories", storeCategory.getAll());
         return "task/formAdd";
     }
 
     @PostMapping("/create")
-    public String addTask(Model model, @ModelAttribute Task task, HttpSession session) {
+    public String addTask(HttpServletRequest req, Model model,
+                          @ModelAttribute Task task, HttpSession session) {
         User user = getUser(session);
         model.addAttribute("user", user);
         task.setUser(user);
-        if (store.createTask(task)) {
+        String[] array = req.getParameterValues("category.id");
+        if (store.createTask(task, array)) {
             return "redirect:/tasks";
         }
-        return "redirect:/failPriority";
+        return "redirect:/failAddTask";
     }
 
-    @GetMapping("/failPriority")
+    @GetMapping("/failAddTask")
     public String failPriority(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        return "task/failPriority";
+        return "task/failAddTask";
     }
 
     @GetMapping("/tasks/update/{id}")
@@ -104,8 +111,7 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String updateTask(Model model, @ModelAttribute Task task, HttpSession session) {
-        model.addAttribute("user", getUser(session));
+    public String updateTask(@ModelAttribute Task task) {
         if (store.updateTask(task)) {
             return "redirect:/tasks";
         }
@@ -128,7 +134,6 @@ public class TaskController {
 
     @PostMapping("/tasks/completed/{id}")
     public String completedTask(Model model, @ModelAttribute Task task) {
-//        model.addAttribute("user", getUser(session));
         if (store.completedTask(task)) {
             return "redirect:/tasks";
         }

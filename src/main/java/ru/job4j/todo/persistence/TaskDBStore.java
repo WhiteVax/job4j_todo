@@ -72,7 +72,7 @@ public class TaskDBStore {
      * @return возвращает объект Optional который содержит задачу или пустую обёртку
      */
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("FROM Task t JOIN FETCH t.priority WHERE t.id = :fId ", Task.class,
+        return crudRepository.optional("FROM Task t JOIN FETCH t.priority JOIN FETCH t.categories WHERE t.id = :fId ", Task.class,
                 Map.of("fId", id));
     }
 

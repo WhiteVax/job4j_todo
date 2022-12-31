@@ -16,8 +16,4 @@ public class PriorityService {
     public List<Priority> getAll() {
         return store.findAllOrderByPosition();
     }
-
-    public boolean checkPriorityById(int id) {
-        return store.findById(id).isPresent();
-    }
  }
