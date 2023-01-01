@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -23,7 +24,7 @@ public class TaskDBStore {
      * @return task с id.
      */
     public Task createTask(Task task) {
-        task.setCreated(LocalDate.now());
+        task.setCreated(LocalDateTime.now());
         crudRepository.run(session ->
             session.persist("task", task));
         return task;

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +26,7 @@ public class Task {
     private int id;
     private String name;
     private String description;
-    private LocalDate created;
+    private LocalDateTime created;
     private boolean done;
 
     @ManyToOne

@@ -10,8 +10,10 @@ import ru.job4j.todo.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static ru.job4j.todo.util.UserSession.getUser;
+import static ru.job4j.todo.util.TaskZone.getAllZone;
 
 @Controller
 @AllArgsConstructor
@@ -22,11 +24,14 @@ public class UserController {
     @GetMapping("/registration")
     public String registration(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
+        model.addAttribute("timeZone", getAllZone());
         return "user/registration";
     }
 
     @PostMapping("/createUser")
-    public String regOrFail(Model model, @ModelAttribute User user) {
+    public String regOrFail(@RequestParam("timeZone") String zone, Model model, @ModelAttribute User user) {
+
+        user.setUserZone(TimeZone.getTimeZone(zone));
         Optional<User> regUser = store.createUser(user);
         if (regUser.isEmpty()) {
             model.addAttribute("message",

@@ -7,9 +7,7 @@ import ru.job4j.todo.persistence.CategoryDBStory;
 import ru.job4j.todo.persistence.PriorityDBStore;
 import ru.job4j.todo.persistence.TaskDBStore;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @AllArgsConstructor
 @Service

@@ -68,7 +68,7 @@
                         <a th:text="${task.name}"
                            th:href="@{|tasks/${task.id}|}"></a>
                     </td>
-                    <td th:text="${task.created}"></td>
+                    <td th:text="${#temporals.format (task.created, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <td>
                         <span th:if="${task.done}">Выполнено</span>
                         <span th:if="${!task.done}">В работе</span>
