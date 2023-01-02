@@ -24,4 +24,9 @@ public class CategoryDBStory {
         return crudRepository.optional("FROM Category WHERE id = :fId", Category.class,
                 Map.of("fId", id));
     }
+
+    public List<Category> getAllInIds(List<Integer> list) {
+        return crudRepository.query("FROM Category WHERE id IN :list",
+                Category.class, Map.of("list", list));
+    }
 }

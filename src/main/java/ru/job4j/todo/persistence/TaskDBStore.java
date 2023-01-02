@@ -35,13 +35,7 @@ public class TaskDBStore {
      * @param task обновлённую.
      */
     public Task updateTask(Task task) {
-        crudRepository.run(
-            "UPDATE Task SET name = :fName, description = :fDescription, priority_id = :fPriority_id WHERE id = :fId",
-                    Map.of("fName", task.getName(),
-                            "fDescription", task.getDescription(),
-                            "fPriority_id", task.getPriority().getId(),
-                            "fId", task.getId())
-        );
+        crudRepository.run(session -> session.merge(task));
         return task;
     }
 

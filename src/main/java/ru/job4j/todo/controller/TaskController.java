@@ -48,7 +48,7 @@ public class TaskController {
 
     @GetMapping("/new")
     public String newTask(Model model, HttpSession session) {
-        List<Task> list = store.findAllTask().stream().map(TaskZone::setZone).toList();
+        List<Task> list = store.findNewTask().stream().map(TaskZone::setZone).toList();
         model.addAttribute("user", getUser(session));
         model.addAttribute("tasks", list);
         return "task/new";
@@ -56,7 +56,7 @@ public class TaskController {
 
     @GetMapping("/done")
     public String doneTask(Model model, HttpSession session) {
-        List<Task> list = store.findAllTask().stream().map(TaskZone::setZone).toList();
+        List<Task> list = store.findOldTask().stream().map(TaskZone::setZone).toList();
         model.addAttribute("user", getUser(session));
         model.addAttribute("tasks", list);
         return "task/done";
@@ -108,6 +108,7 @@ public class TaskController {
         model.addAttribute("user", getUser(session));
         model.addAttribute("priorities", storePriority.getAll());
         model.addAttribute("task", task.get());
+        model.addAttribute("categories", storeCategory.getAll());
         return "task/formUpdate";
     }
 
@@ -118,8 +119,11 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String updateTask(@ModelAttribute Task task) {
-        if (store.updateTask(task)) {
+    public String updateTask(HttpServletRequest req, @ModelAttribute Task task,
+                             HttpSession session) {
+        task.setUser(getUser(session));
+        String[] array = req.getParameterValues("category.id");
+        if (store.updateTask(task, array)) {
             return "redirect:/tasks";
         }
         return "redirect:/failUpdate";

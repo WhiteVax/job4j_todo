@@ -71,8 +71,18 @@
                                     th:text="${priority.name}"></option>
                         </select>
                     </div>
+                    <div>
+                        <label for="category">Категория</label>
+                        <select class="form-control" id="category" name="category.id" multiple="multiple">
+                            <option th:each="category : ${categories}" th:value="${category.id}"
+                                    th:text="${category.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="done" class="form-check-input" id="done">
+                        <label class="form-check-label" for="done">Состояние</label>
+                    </div>
                     <input type="hidden" name="created" th:field="*{created}"/>
-                    <input type="hidden" name="done" th:field="*{done}"/>
                     <button type="submit" class="btn btn-primary m-3">Сохранить
                     </button>
                 </form>
