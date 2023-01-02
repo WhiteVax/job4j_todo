@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.job4j.todo.model.Task;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -14,11 +13,15 @@ public final class TaskZone {
 
     public static Task setZone(Task task) {
         TimeZone zoneId = task.getUser().getUserZone();
+
         if (zoneId == null) {
             zoneId = TimeZone.getDefault();
         }
-        task.setCreated(LocalDateTime.from(task.getCreated()
-                .atZone(zoneId.toZoneId())));
+
+        task.setCreated(task.getCreated()
+                .atZone(TimeZone.getDefault().toZoneId())
+                .withZoneSameInstant(zoneId.toZoneId())
+                .toLocalDateTime());
         return task;
     }
 
