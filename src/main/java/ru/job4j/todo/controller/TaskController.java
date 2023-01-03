@@ -8,7 +8,7 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
-import ru.job4j.todo.util.TaskZone;
+import ru.job4j.todo.util.TaskTimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 import static ru.job4j.todo.util.UserSession.getUser;
-import static ru.job4j.todo.util.TaskZone.setZone;
+import static ru.job4j.todo.util.TaskTimeZone.setTimeWithTimeZone;
 
 @Controller
 public class TaskController {
@@ -40,7 +40,7 @@ public class TaskController {
 
     @GetMapping("/tasks")
     public String allTasks(Model model, HttpSession session) {
-        List<Task> list = store.findAllTask().stream().map(TaskZone::setZone).toList();
+        List<Task> list = store.findAllTask().stream().map(TaskTimeZone::setTimeWithTimeZone).toList();
         model.addAttribute("tasks", list);
         model.addAttribute("user", getUser(session));
         return "task/tasks";
@@ -48,7 +48,7 @@ public class TaskController {
 
     @GetMapping("/new")
     public String newTask(Model model, HttpSession session) {
-        List<Task> list = store.findNewTask().stream().map(TaskZone::setZone).toList();
+        List<Task> list = store.findNewTask().stream().map(TaskTimeZone::setTimeWithTimeZone).toList();
         model.addAttribute("user", getUser(session));
         model.addAttribute("tasks", list);
         return "task/new";
@@ -56,7 +56,7 @@ public class TaskController {
 
     @GetMapping("/done")
     public String doneTask(Model model, HttpSession session) {
-        List<Task> list = store.findOldTask().stream().map(TaskZone::setZone).toList();
+        List<Task> list = store.findOldTask().stream().map(TaskTimeZone::setTimeWithTimeZone).toList();
         model.addAttribute("user", getUser(session));
         model.addAttribute("tasks", list);
         return "task/done";
@@ -65,7 +65,7 @@ public class TaskController {
     @GetMapping("/tasks/{id}")
     public String getTask(Model model, @PathVariable("id") int id, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        var task =   setZone(store.findById(id).get());
+        var task =   setTimeWithTimeZone(store.findById(id).get());
         model.addAttribute("task", task);
         return "task/task";
     }

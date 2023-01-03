@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import static ru.job4j.todo.util.UserSession.getUser;
-import static ru.job4j.todo.util.TaskZone.getAllZone;
+import static ru.job4j.todo.util.TaskTimeZone.getAllZone;
 
 @Controller
 @AllArgsConstructor
