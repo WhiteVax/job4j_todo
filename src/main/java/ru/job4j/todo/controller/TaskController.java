@@ -87,73 +87,59 @@ public class TaskController {
         model.addAttribute("user", user);
         task.setUser(user);
         String[] array = req.getParameterValues("category.id");
-        if (store.createTask(task, array)) {
-            return "redirect:/tasks";
+        if (!store.createTask(task, array)) {
+            model.addAttribute("message", "Ошибка при добавлении задачи.");
+            return "task/404";
         }
-        return "redirect:/failAddTask";
-    }
-
-    @GetMapping("/failAddTask")
-    public String failPriority(Model model, HttpSession session) {
-        model.addAttribute("user", getUser(session));
-        return "task/failAddTask";
+        return "redirect:/tasks";
     }
 
     @GetMapping("/tasks/update/{id}")
     public String formUpdateTask(Model model, @PathVariable("id") int id, HttpSession session) {
         var task = store.findById(id);
-        if (task.isEmpty()) {
-            return "redirect:/failUpdate";
-        }
         model.addAttribute("user", getUser(session));
+        if (task.isEmpty()) {
+            model.addAttribute("message", "Данной задачи не существует.");
+            return "task/404";
+        }
         model.addAttribute("priorities", storePriority.getAll());
         model.addAttribute("task", task.get());
         model.addAttribute("categories", storeCategory.getAll());
         return "task/formUpdate";
     }
 
-    @GetMapping("/failUpdate")
-    public String formUpdateTask(Model model, HttpSession session) {
-        model.addAttribute("user", getUser(session));
-        return "task/failUpdate";
-    }
-
     @PostMapping("/update")
     public String updateTask(HttpServletRequest req, @ModelAttribute Task task,
-                             HttpSession session) {
-        task.setUser(getUser(session));
+                             HttpSession session, Model model) {
+        var user = getUser(session);
+        task.setUser(user);
+        model.addAttribute(user);
         String[] array = req.getParameterValues("category.id");
         if (store.updateTask(task, array)) {
             return "redirect:/tasks";
         }
-        return "redirect:/failUpdate";
+        model.addAttribute("message", "Ошибка при обновлении задачи.");
+        return "task/404";
     }
 
     @PostMapping("/tasks/delete/{id}")
-    public String delete(@PathVariable("id") int id) {
+    public String delete(@PathVariable("id") int id, Model model, HttpSession session) {
         if (store.deleteTask(id)) {
             return "redirect:/tasks";
         }
-        return "redirect:/failDelete";
-    }
-
-    @GetMapping("/failDelete")
-    public String failDelete(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        return "task/failDelete";
+        model.addAttribute("message", "Ошибка при удалении задачи.");
+        return "task/404";
     }
 
     @PostMapping("/tasks/completed/{id}")
-    public String completedTask(Model model, @ModelAttribute Task task) {
+    public String completedTask(Model model, @ModelAttribute Task task, HttpSession session) {
         if (store.completedTask(task)) {
             return "redirect:/tasks";
         }
-        return "redirect:/failCompleted";
+        model.addAttribute("user", getUser(session));
+        model.addAttribute("message", "Ошибка при завершении задачи.");
+        return "task/404";
     }
 
-    @GetMapping("/failCompleted")
-    public String failCompleted(Model model, HttpSession session) {
-        model.addAttribute("user", getUser(session));
-        return "task/failCompleted";
-    }
 }
